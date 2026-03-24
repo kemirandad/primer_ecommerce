@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:primer_ecommerce/feature/models/item_carrito_model.dart';
 import 'package:primer_ecommerce/feature/providers/carrito_provider.dart';
 
-
 class CarritoScreen extends StatelessWidget {
   const CarritoScreen({super.key});
 
@@ -58,7 +57,10 @@ class CarritoScreen extends StatelessWidget {
                             children: [
                               Text(
                                 'Valor total: \$${carritoProvider.totalPrecioCarrito.toStringAsFixed(0)}',
-                                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                               ElevatedButton(
                                 onPressed: () =>
@@ -67,9 +69,16 @@ class CarritoScreen extends StatelessWidget {
                               ),
 
                               ElevatedButton(
-                                onPressed: () => ScaffoldMessenger.of(
-                                    context,
-                                  ).showSnackBar(SnackBar(content: Text('El precio total es \$${carritoProvider.totalPrecioCarrito.toStringAsFixed(0)}'))),
+                                onPressed: () {
+                                  carritoProvider.vaciarCarrito();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'El precio total es \$${carritoProvider.totalPrecioCarrito.toStringAsFixed(0)}',
+                                      ),
+                                    ),
+                                  );
+                                },
                                 child: Text('Finalizar compra'),
                               ),
                             ],

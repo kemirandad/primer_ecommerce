@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:primer_ecommerce/feature/providers/carrito_provider.dart';
 
 class PerfilScreen extends StatelessWidget {
   const PerfilScreen({super.key});
@@ -60,7 +61,10 @@ class PerfilScreen extends StatelessWidget {
                           PerfilButtons(
                             nombre: 'Cerrar sesión',
                             icon: Icons.logout,
-                            onCerrarSesion: () => context.go('/login'),
+                            onCerrarSesion: () {
+                              carritoProvider.vaciarCarrito();
+                              context.go('/login');
+                            },
                           ),
                         ],
                       ),
@@ -99,7 +103,7 @@ class PerfilButtons extends StatelessWidget {
     super.key,
     this.color = Colors.black,
     required this.icon,
-    required this.nombre, 
+    required this.nombre,
     this.onCerrarSesion,
   });
 
