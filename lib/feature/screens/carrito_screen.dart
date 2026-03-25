@@ -37,9 +37,9 @@ class CarritoScreen extends StatelessWidget {
                       Expanded(
                         flex: 75,
                         child: ListView.builder(
-                          itemCount: carritoProvider.items.length,
+                          itemCount: value.length,
                           itemBuilder: (context, index) {
-                            final item = items[index];
+                            final item = value[index];
                             return ItemCardWidget(
                               item: item,
                               onEliminarItem: () => carritoProvider.eliminar(
@@ -70,11 +70,13 @@ class CarritoScreen extends StatelessWidget {
 
                               ElevatedButton(
                                 onPressed: () {
+                                  final total =
+                                      carritoProvider.totalPrecioCarrito;
                                   carritoProvider.vaciarCarrito();
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text(
-                                        'El precio total es \$${carritoProvider.totalPrecioCarrito.toStringAsFixed(0)}',
+                                        'Compra finalizada por \$$total',
                                       ),
                                     ),
                                   );

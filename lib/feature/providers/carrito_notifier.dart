@@ -73,7 +73,7 @@ class NewCarritoNotifier {
 
   void decrementar(String id) {
     final item = items.firstWhere((i) => i.productoModel.id == id);
-    if (item.cantidad < 1) {
+    if (item.cantidad <= 1) {
       eliminar(id);
       return;
     }

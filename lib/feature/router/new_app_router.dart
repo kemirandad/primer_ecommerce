@@ -94,7 +94,7 @@ class ScaffolConTabs extends StatelessWidget {
                 count: carritoProvider.totalItems,
                 child: Icon(Icons.shopping_cart),
               ),
-              label: 'Productos',
+              label: 'Carrito',
             ),
             NavigationDestination(
               icon: Icon(Icons.person_outline),

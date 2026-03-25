@@ -4,14 +4,9 @@ import 'package:primer_ecommerce/feature/models/producto_model.dart';
 import 'package:primer_ecommerce/feature/providers/carrito_provider.dart';
 
 
-class ProductosScreen extends StatefulWidget {
+class ProductosScreen extends StatelessWidget {
   const ProductosScreen({super.key});
 
-  @override
-  State<ProductosScreen> createState() => _ProductosScreenState();
-}
-
-class _ProductosScreenState extends State<ProductosScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
