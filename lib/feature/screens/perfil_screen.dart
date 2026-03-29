@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:primer_ecommerce/feature/providers/carrito_provider.dart';
+import 'package:primer_ecommerce/feature/providers/carrito_notifier_riverpod.dart';
 
-class PerfilScreen extends StatelessWidget {
+class PerfilScreen extends ConsumerWidget {
   const PerfilScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final carritoProvider = ref.read(carritoNotifier.notifier);
     final alto = MediaQuery.of(context).size.height;
 
     return Scaffold(

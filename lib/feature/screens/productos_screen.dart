@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:primer_ecommerce/feature/models/producto_model.dart';
-import 'package:primer_ecommerce/feature/providers/carrito_provider.dart';
+import 'package:primer_ecommerce/feature/providers/carrito_notifier_riverpod.dart';
 
 
-class ProductosScreen extends StatelessWidget {
+class ProductosScreen extends ConsumerWidget {
   const ProductosScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final catalogo = ref.watch(catalogoProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Ecommerce App', style: TextStyle(fontSize: 24)),
       ),
-      body: ValueListenableBuilder(
-        valueListenable: carritoProvider.state,
-        builder: (context, itemsCarrito, child) {
-          return GridView.builder(
-            itemCount: carritoProvider.catalogo.length,
+      body: GridView.builder(
+            itemCount: catalogo.length,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               mainAxisSpacing: 6,
@@ -25,54 +25,37 @@ class ProductosScreen extends StatelessWidget {
               childAspectRatio: 1.2,
             ),
             itemBuilder: (context, index) {
-              final producto = carritoProvider.catalogo[index];
+              final producto = catalogo[index];
               return Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: GestureDetector(
-                  onTap: () => context.push('/productos/detail/${producto.id}', extra: producto),
+                  onTap: () => context.push('/productos/detail/${producto.id}'),
                   child: ProductoCardWidget(
                     producto: producto,
-                    onCantidadAgregadaPorProducto: (String id) =>
-                        carritoProvider.cantidadAgregadaProducto(producto.id),
-                    onEstaEnCarrito: (String id) =>
-                        carritoProvider.estaEnCarrito(producto.id),
-                    onAgregar: () => carritoProvider.agregarProducto(producto),
-                    onIncrementar: () =>
-                        carritoProvider.incrementar(producto.id),
-                    onDecrementar: () =>
-                        carritoProvider.decrementar(producto.id),
                   ),
                 ),
               );
             },
-          );
-        },
-      ),
+          )
     );
   }
 }
 
-class ProductoCardWidget extends StatelessWidget {
+class ProductoCardWidget extends ConsumerWidget {
   final ProductoModel producto;
-  final VoidCallback onAgregar;
-  final VoidCallback onDecrementar;
-  final VoidCallback onIncrementar;
-  final bool Function(String id) onEstaEnCarrito;
-  final int Function(String id) onCantidadAgregadaPorProducto;
 
 
   const ProductoCardWidget({
     super.key,
     required this.producto,
-    required this.onAgregar,
-    required this.onIncrementar,
-    required this.onDecrementar,
-    required this.onEstaEnCarrito,
-    required this.onCantidadAgregadaPorProducto
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final estaEnCarrito = ref.watch(estaEnCarritoProvider(producto.id));
+    final carritoController = ref.read(carritoNotifier.notifier);
+    final cantidad = ref.watch(cantidadProductoProvider(producto.id));
+
     return Container(
       decoration: BoxDecoration(
         color: producto.color.withValues(alpha: 0.2),
@@ -95,9 +78,9 @@ class ProductoCardWidget extends StatelessWidget {
               style: TextStyle(fontSize: 16),
             ),
 
-            !onEstaEnCarrito(producto.id)
+            !estaEnCarrito
                 ? ElevatedButton.icon(
-                    onPressed: onAgregar,
+                    onPressed: () => carritoController.agregarProducto(producto),
                     label: Text('Agregar'),
                     icon: Icon(Icons.add),
                   )
@@ -106,14 +89,14 @@ class ProductoCardWidget extends StatelessWidget {
                     spacing: 12,
                     children: [
                       IconButton(
-                        onPressed: onDecrementar,
+                        onPressed: () => carritoController.decrementar(producto.id),
                         icon: Icon(Icons.remove),
                       ),
                       Text(
-                        '${onCantidadAgregadaPorProducto(producto.id)}',
+                        '$cantidad',
                       ),
                       IconButton(
-                        onPressed: onIncrementar,
+                        onPressed: () => carritoController.incrementar(producto.id),
                         icon: Icon(Icons.add),
                       ),
                     ],

@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:primer_ecommerce/feature/models/producto_model.dart';
-import 'package:primer_ecommerce/feature/providers/carrito_provider.dart';
+import 'package:primer_ecommerce/feature/providers/carrito_notifier_riverpod.dart';
 import 'package:primer_ecommerce/feature/screens/carrito_screen.dart';
+import 'package:primer_ecommerce/feature/screens/checkout_form.dart';
 import 'package:primer_ecommerce/feature/screens/login_screen.dart';
 import 'package:primer_ecommerce/feature/screens/perfil_screen.dart';
 import 'package:primer_ecommerce/feature/screens/producto_detail_screen.dart';
 import 'package:primer_ecommerce/feature/screens/productos_screen.dart';
 
-
 final appRouter = GoRouter(
   initialLocation: '/login',
+  debugLogDiagnostics: true,
   routes: [
     GoRoute(path: '/login', builder: (context, state) => LoginScreen()),
     ShellRoute(
@@ -27,8 +28,8 @@ final appRouter = GoRouter(
             GoRoute(
               path: 'detail/:id',
               builder: (context, state) {
-                final producto = state.extra as ProductoModel;
-                return ProductoDetailScreen(producto: producto);
+                final id = state.pathParameters['id']!;
+                return ProductoDetailScreen(id: id);
               },
             ),
           ],
@@ -38,6 +39,14 @@ final appRouter = GoRouter(
           builder: (context, state) {
             return CarritoScreen();
           },
+          routes: [
+            GoRoute(
+              path: 'checkout',
+              builder: (context, state) {
+                return CheckoutForm();
+              },
+            )
+          ]
         ),
         GoRoute(
           path: '/perfil',
@@ -50,7 +59,7 @@ final appRouter = GoRouter(
   ],
 );
 
-class ScaffolConTabs extends StatelessWidget {
+class ScaffolConTabs extends ConsumerWidget {
   final Widget child;
   const ScaffolConTabs({super.key, required this.child});
 
@@ -62,12 +71,12 @@ class ScaffolConTabs extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final totalItems = ref.watch(carritoNotifier).length;
+
     return Scaffold(
       body: child,
-      bottomNavigationBar: ValueListenableBuilder(
-        valueListenable: carritoProvider.state,
-        builder: (context, items, child) => NavigationBar(
+      bottomNavigationBar: NavigationBar(
           selectedIndex: _indexActual(context),
           onDestinationSelected: (index) {
             switch (index) {
@@ -87,11 +96,11 @@ class ScaffolConTabs extends StatelessWidget {
             ),
             NavigationDestination(
               icon: Badge.count(
-                count: carritoProvider.totalItems,
+                count: totalItems,
                 child: Icon(Icons.shopping_cart_outlined),
               ),
               selectedIcon: Badge.count(
-                count: carritoProvider.totalItems,
+                count: totalItems,
                 child: Icon(Icons.shopping_cart),
               ),
               label: 'Carrito',
@@ -103,7 +112,6 @@ class ScaffolConTabs extends StatelessWidget {
             ),
           ],
         ),
-      ),
     );
   }
 }

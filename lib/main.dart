@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:primer_ecommerce/feature/router/new_app_router.dart';
 void main(List<String> args) {
-  runApp(const MiApp());
+  runApp(ProviderScope(child: const MiApp()));
 }
 
 class MiApp extends StatelessWidget {
